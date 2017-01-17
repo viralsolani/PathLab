@@ -13,9 +13,8 @@ class Update1484594012ReportsTable extends Migration
     public function up()
     {
         Schema::table('reports', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned()->nullable();
-                $table->foreign('user_id', 'fk_8180_useruser_report')->references('id')->on('users');
-                
+            $table->integer('user_id')->after('id')->unsigned();
+                $table->foreign('user_id', 'fk_useruser_report')->references('id')->on('users');
         });
 
     }
@@ -31,7 +30,7 @@ class Update1484594012ReportsTable extends Migration
             $table->dropForeign('fk_8180_user_user_id_report');
             $table->dropIndex('fk_8180_user_user_id_report');
             $table->dropColumn('user_id');
-            
+
         });
 
     }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon as Carbon;
 
 class RoleSeed extends Seeder
 {
@@ -11,15 +13,24 @@ class RoleSeed extends Seeder
      */
     public function run()
     {
-        $items = [
+        if (DB::connection()->getDriverName() == 'mysql')
+        {
+            DB::table('roles')->truncate();
+        }
 
-            ['id' => 1, 'title' => 'Operator',],
-            ['id' => 2, 'title' => 'Patient',],
-
+        $users = [
+            [
+                'title'              => 'Operator',
+                'created_at'        => Carbon::now(),
+                'updated_at'        => Carbon::now(),
+            ],
+            [
+                'title'              => 'Patient',
+                'created_at'        => Carbon::now(),
+                'updated_at'        => Carbon::now(),
+            ],
         ];
 
-        foreach ($items as $item) {
-            \App\Role::create($item);
-        }
+        DB::table('roles')->insert($users);
     }
 }

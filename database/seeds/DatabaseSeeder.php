@@ -11,9 +11,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        
+        if (DB::connection()->getDriverName() == 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
+
         $this->call(RoleSeed::class);
         $this->call(UserSeed::class);
+
+        if (DB::connection()->getDriverName() == 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
     }
 }

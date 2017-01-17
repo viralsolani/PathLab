@@ -13,10 +13,9 @@ class Update1484592326UsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone')->nullable();
-                $table->date('dob')->nullable();
-                $table->string('photo')->nullable();
-                
+            $table->string('photo')->after('password')->nullable();
+            $table->string('phone')->after('password')->nullable();
+            $table->date('dob')->after('password')->nullable();
         });
 
     }
@@ -32,7 +31,6 @@ class Update1484592326UsersTable extends Migration
             $table->dropColumn('phone');
             $table->dropColumn('dob');
             $table->dropColumn('photo');
-            
         });
 
     }

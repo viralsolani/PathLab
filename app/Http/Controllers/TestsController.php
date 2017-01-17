@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Test;
+use App\Models\Test;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreTestsRequest;

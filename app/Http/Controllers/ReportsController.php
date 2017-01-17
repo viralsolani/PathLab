@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Report;
+use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreReportsRequest;
@@ -37,7 +37,7 @@ class ReportsController extends Controller
         }
 
         $relations = [
-            'users' => \App\User::get()->where('role_id',2)->pluck('name', 'id')->prepend('Please select', ''),
+            'users' => \App\Models\User::get()->where('role_id',2)->pluck('name', 'id')->prepend('Please select', ''),
         ];
 
         return view('reports.create', $relations);
@@ -72,7 +72,7 @@ class ReportsController extends Controller
             return abort(401);
         }
         $relations = [
-            'users' => \App\User::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'users' => \App\Models\User::get()->pluck('name', 'id')->prepend('Please select', ''),
         ];
 
         $report = Report::findOrFail($id);
@@ -111,7 +111,7 @@ class ReportsController extends Controller
             return abort(401);
         }
         $relations = [
-            'users' => \App\User::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'users' => \App\Models\User::get()->pluck('name', 'id')->prepend('Please select', ''),
         ];
 
         $report = Report::findOrFail($id);

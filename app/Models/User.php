@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,10 +23,10 @@ use Hash;
 class User extends Authenticatable
 {
     use SoftDeletes, Notifiable;
-    
+
     protected $fillable = ['name', 'email', 'password', 'remember_token', 'phone', 'dob', 'photo', 'role_id'];
-    
-    
+
+
     /**
      * Hash password
      * @param $input
@@ -36,7 +36,7 @@ class User extends Authenticatable
         if ($input)
             $this->attributes['password'] = app('hash')->needsRehash($input) ? Hash::make($input) : $input;
     }
-    
+
 
     /**
      * Set to null if empty
@@ -76,10 +76,10 @@ class User extends Authenticatable
             return '';
         }
     }
-    
+
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id')->withTrashed();
     }
-    
+
 }

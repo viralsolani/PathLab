@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
@@ -17,9 +17,9 @@ use Carbon\Carbon;
 class Report extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = ['name', 'details', 'date', 'user_id'];
-    
+
 
     /**
      * Set to null if empty
@@ -59,10 +59,10 @@ class Report extends Model
             return '';
         }
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
-    
+
 }

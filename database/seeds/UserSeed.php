@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon as Carbon;
 
 class UserSeed extends Seeder
 {
@@ -11,14 +13,39 @@ class UserSeed extends Seeder
      */
     public function run()
     {
-        $items = [
-            
-            ['id' => 1, 'name' => 'Admin', 'email' => 'admin@admin.com', 'password' => '$2y$10$I9lLucuOlIwHgrTlDCI5OO4ujkK5CqQ3qAl4RXbyAep.q3bp5FcQO', 'role_id' => 1, 'remember_token' => '', 'phone' => null, 'dob' => '', 'photo' => null,],
 
+        if (DB::connection()->getDriverName() == 'mysql')
+        {
+            DB::table('users')->truncate();
+        }
+
+        $users = [
+            [
+                'name'              => 'Operator',
+                'email'             => 'operator@crossover.com',
+                'password'          => bcrypt('pasword'),
+                'role_id'           => 1,
+                'remember_token'    => '',
+                'phone'             => 9428315132,
+                'dob'               => null,
+                'photo'             => null,
+                'created_at'        => Carbon::now(),
+                'updated_at'        => Carbon::now(),
+            ],
+            [
+                'name'              => 'Patient1',
+                'email'             => 'patient@gmail.com',
+                'password'          => bcrypt('pasword'),
+                'role_id'           => 2,
+                'remember_token'    => '',
+                'phone'             => 9016608346,
+                'dob'               => null,
+                'photo'             => null,
+                'created_at'        => Carbon::now(),
+                'updated_at'        => Carbon::now(),
+            ],
         ];
 
-        foreach ($items as $item) {
-            \App\User::create($item);
-        }
+        DB::table('users')->insert($users);
     }
 }
