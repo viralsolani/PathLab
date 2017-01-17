@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\GeneralException;
 use App\Models\Test;
+use App\Models\Report;
 use App\Repositories\DbRepository;
+use App\Exceptions\GeneralException;
 
 /**
  * Class TestRepository
@@ -49,12 +50,23 @@ class TestRepository extends DbRepository
     }
 
     /**
+     * Get all of the tests for a given reports.
+     *
+     * @param Report $report
+     * @return Collection
+     */
+    public function forReport(Report $report)
+    {
+        return $report->tests;
+    }
+
+    /**
      * Get Tests
      *
      * @return mix
      */
-    public function getSelectedTests()
+    public function getTestLists()
     {
-        return $this->model->get()->pluck('title', 'id')->prepend('Please select', '');
+        return $this->model->get()->pluck('name', 'id');
     }
 }

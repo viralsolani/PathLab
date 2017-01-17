@@ -107,5 +107,10 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1, 2]);
         });
 
+        // Auth gates for: Reports Tests
+        Gate::define('report_test_access', function ($user) {
+            return in_array($user->role_id, [1, 2]);
+        });
+
     }
 }

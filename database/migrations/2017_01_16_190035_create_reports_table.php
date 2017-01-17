@@ -12,13 +12,15 @@ class CreateReportsTable extends Migration
      */
     public function up()
     {
-        if(! Schema::hasTable('reports')) {
-            Schema::create('reports', function (Blueprint $table) {
+        if(!Schema::hasTable('reports'))
+        {
+            Schema::create('reports', function (Blueprint $table)
+            {
                 $table->increments('id');
                 $table->string('name')->nullable();
                 $table->text('details')->nullable();
                 $table->datetime('date')->nullable();
-                
+
                 $table->timestamps();
                 $table->softDeletes();
 

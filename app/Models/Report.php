@@ -1,9 +1,11 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Models\Test;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Report
@@ -60,9 +62,24 @@ class Report extends Model
         }
     }
 
+    /**
+     * Relationship Mapping for User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id')->withTrashed();
+    }
+
+    /**
+     * Relationship Mapping for Tests
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tests()
+    {
+        return $this->belongsToMany(Test::class, 'report_test')->withPivot('test_name', 'result');
     }
 
 }

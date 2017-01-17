@@ -41,7 +41,7 @@
                                 <td>{{ $report->date }}</td>
                                 <td>
                                     @can('report_view')
-                                    <a href="{{ route('reports.show',[$report->id]) }}" class="btn btn-xs btn-primary">@lang('admin.manage_test')</a>
+                                    <a href="{{route('reports.tests.index', $report->id)}}" class="btn btn-xs btn-primary">@lang('admin.add_test')</a>
                                     @endcan
                                     @can('report_view')
                                     <a href="{{ route('reports.show',[$report->id]) }}" class="btn btn-xs btn-primary">@lang('admin.view')</a>

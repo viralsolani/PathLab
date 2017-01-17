@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Repositories\UserRepository;
 use App\Repositories\ReportRepository;
-use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreReportsRequest;
 use App\Http\Requests\UpdateReportsRequest;
 

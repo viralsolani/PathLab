@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\GeneralException;
+use App\Models\Test;
 use App\Models\Report;
 use App\Repositories\DbRepository;
+use App\Exceptions\GeneralException;
 
 /**
  * Class ReportRepository
@@ -47,6 +48,35 @@ class ReportRepository extends DbRepository
         $report = $this->findOrThrowException($id);
 
         return $report->update($request->all());
+    }
+
+    /**
+     * Add test to Report
+     *
+     * @param $test_data
+     * @param Report $report
+     * @return mixed
+     */
+    public function addTest($test_data, Report $report)
+    {
+        return $report->tests()->sync([
+                        $test_data['id'] => [
+                            'result'    => $test_data['result'],
+                            'test_name' => Test::findOrFail($test_data['id'])->name
+                        ]
+                ], false);
+    }
+
+    /**
+     * Remove test from report
+     *
+     * @param Test $test
+     * @param Report $report
+     * @return mixed
+     */
+    public function removeTest(Test $test, Report $report)
+    {
+        return $report->tests()->detach($test->id);
     }
 
 }
