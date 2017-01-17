@@ -65,7 +65,19 @@ class RolesController extends Controller
             return abort(401);
         }
 
-        $this->role->create($request);
+        try
+        {
+            $role = $this->role->create($request);
+
+            if($role)
+            {
+                session()->flash('success', trans('admin.roles.created'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('roles.index');
     }
@@ -103,7 +115,19 @@ class RolesController extends Controller
             return abort(401);
         }
 
-        $role = $this->role->update($request, $id);
+        try
+        {
+            $role = $this->role->update($request, $id);
+
+            if($role)
+            {
+                session()->flash('success', trans('admin.roles.updated'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('roles.index');
     }
@@ -141,9 +165,11 @@ class RolesController extends Controller
             return abort(401);
         }
 
-        $this->role->destroy($id);
-
-        return redirect()->route('roles.index');
+        if($this->role->destroy($id))
+        {
+            session()->flash('success', trans('admin.roles.deleted'));
+            return redirect()->route('roles.index');
+        }
     }
 
     /**

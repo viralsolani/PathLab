@@ -69,7 +69,19 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $this->user->create($request);
+        try
+        {
+             $user = $this->user->create($request);
+
+             if($user)
+             {
+                 session()->flash('success', trans('admin.users.created'));
+             }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('users.index');
     }
@@ -109,7 +121,20 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $user = $this->user->update($request, $id);
+        try
+        {
+            $user = $this->user->update($request, $id);
+
+            if($user)
+            {
+                session()->flash('success', trans('admin.users.updated'));
+            }
+
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('users.index');
     }
@@ -149,7 +174,17 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $this->user->destroy($id);
+        try
+        {
+             if($this->user->destroy($id))
+             {
+                 session()->flash('success', trans('admin.users.deleted'));
+             }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('users.index');
     }

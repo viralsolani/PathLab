@@ -63,9 +63,11 @@ Abstract class DbRepository
      */
     public function destroy($id)
     {
-        if ($this->model->where('ID', '=', $id)->delete()) {
+        if ($this->model->where('ID', '=', $id)->delete())
+        {
             return true;
         }
+
         throw new GeneralException('There was a problem deleting this record. Please try again.');
     }
 
