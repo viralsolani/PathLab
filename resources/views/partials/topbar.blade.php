@@ -4,10 +4,10 @@
             <div class="navbar-header">
                 <a href="{{ url('/home') }}"
                    class="navbar-brand">
-                    @lang('quickadmin.quickadmin_title')
+                    @lang('admin.admin_title')
                 </a>
             </div>
-            
+
             <a href="javascript:;"
                class="menu-toggler responsive-toggler"
                data-toggle="collapse"

@@ -10,9 +10,9 @@
 <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.colVis.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-<script src="{{ url('quickadmin/js') }}/bootstrap.min.js"></script>
-<script src="{{ url('quickadmin/js') }}/select2.full.min.js"></script>
-<script src="{{ url('quickadmin/js') }}/main.js"></script>
+<script src="{{ url('admin/js') }}/bootstrap.min.js"></script>
+<script src="{{ url('admin/js') }}/select2.full.min.js"></script>
+<script src="{{ url('admin/js') }}/main.js"></script>
 
 <script>
     window._token = '{{ csrf_token() }}';

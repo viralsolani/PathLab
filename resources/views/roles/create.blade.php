@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title">@lang('quickadmin.roles.title')</h3>
+    <h3 class="page-title">@lang('admin.roles.title')</h3>
     {!! Form::open(['method' => 'POST', 'route' => ['roles.store']]) !!}
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            @lang('quickadmin.create')
+            @lang('admin.create')
         </div>
-        
+
         <div class="panel-body">
             <div class="row">
                 <div class="col-xs-12 form-group">
@@ -22,11 +22,11 @@
                     @endif
                 </div>
             </div>
-            
+
         </div>
     </div>
 
-    {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger']) !!}
+    {!! Form::submit(trans('admin.save'), ['class' => 'btn btn-danger']) !!}
     {!! Form::close() !!}
 @stop
 

@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title">@lang('quickadmin.tests.title')</h3>
-    
+    <h3 class="page-title">@lang('admin.tests.title')</h3>
+
     {!! Form::model($test, ['method' => 'PUT', 'route' => ['tests.update', $test->id]]) !!}
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            @lang('quickadmin.edit')
+            @lang('admin.edit')
         </div>
 
         <div class="panel-body">
@@ -35,11 +35,11 @@
                     @endif
                 </div>
             </div>
-            
+
         </div>
     </div>
 
-    {!! Form::submit(trans('quickadmin.update'), ['class' => 'btn btn-danger']) !!}
+    {!! Form::submit(trans('admin.update'), ['class' => 'btn btn-danger']) !!}
     {!! Form::close() !!}
 @stop
 
