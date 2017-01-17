@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Report;
 use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
+use App\Repositories\ReportRepository;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreReportsRequest;
 use App\Http\Requests\UpdateReportsRequest;
@@ -11,16 +12,30 @@ use App\Http\Requests\UpdateReportsRequest;
 class ReportsController extends Controller
 {
     /**
+     * Construct
+     *
+     * @param ReportRepository  $report
+     * @param UserRepository    $user
+     */
+    public function __construct(ReportRepository $report, UserRepository $user)
+    {
+        $this->report   = $report;
+        $this->user     = $user;
+    }
+
+    /**
      * Display a listing of Report.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        if (! Gate::allows('report_access')) {
+        if (!Gate::allows('report_access'))
+        {
             return abort(401);
         }
-        $reports = Report::all();
+
+        $reports = $this->report->getAll();
 
         return view('reports.index', compact('reports'));
     }
@@ -32,13 +47,12 @@ class ReportsController extends Controller
      */
     public function create()
     {
-        if (! Gate::allows('report_create')) {
+        if(!Gate::allows('report_create'))
+        {
             return abort(401);
         }
 
-        $relations = [
-            'users' => \App\Models\User::get()->where('role_id',2)->pluck('name', 'id')->prepend('Please select', ''),
-        ];
+        $relations = $this->__getUSerRelation();
 
         return view('reports.create', $relations);
     }
@@ -51,10 +65,24 @@ class ReportsController extends Controller
      */
     public function store(StoreReportsRequest $request)
     {
-        if (! Gate::allows('report_create')) {
+        if(!Gate::allows('report_create'))
+        {
             return abort(401);
         }
-        $report = Report::create($request->all());
+
+        try
+        {
+            $report = $this->report->create($request);
+
+            if($report)
+            {
+                session()->flash('success', trans('admin.reports.created'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('reports.index');
     }
@@ -68,14 +96,13 @@ class ReportsController extends Controller
      */
     public function edit($id)
     {
-        if (! Gate::allows('report_edit')) {
+        if(!Gate::allows('report_edit'))
+        {
             return abort(401);
         }
-        $relations = [
-            'users' => \App\Models\User::get()->pluck('name', 'id')->prepend('Please select', ''),
-        ];
 
-        $report = Report::findOrFail($id);
+        $relations  = $this->__getUSerRelation();
+        $report     = $this->report->findOrThrowException($id);
 
         return view('reports.edit', compact('report') + $relations);
     }
@@ -89,11 +116,24 @@ class ReportsController extends Controller
      */
     public function update(UpdateReportsRequest $request, $id)
     {
-        if (! Gate::allows('report_edit')) {
+        if(!Gate::allows('report_edit'))
+        {
             return abort(401);
         }
-        $report = Report::findOrFail($id);
-        $report->update($request->all());
+
+        try
+        {
+            $report = $this->report->update($request, $id);
+
+            if($report)
+            {
+                session()->flash('success', trans('admin.reports.updated'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('reports.index');
     }
@@ -107,14 +147,13 @@ class ReportsController extends Controller
      */
     public function show($id)
     {
-        if (! Gate::allows('report_view')) {
+        if(!Gate::allows('report_view'))
+        {
             return abort(401);
         }
-        $relations = [
-            'users' => \App\Models\User::get()->pluck('name', 'id')->prepend('Please select', ''),
-        ];
 
-        $report = Report::findOrFail($id);
+        $relations  = $this->__getUSerRelation();
+        $report     = $this->report->findOrThrowException($id);
 
         return view('reports.show', compact('report') + $relations);
     }
@@ -128,11 +167,22 @@ class ReportsController extends Controller
      */
     public function destroy($id)
     {
-        if (! Gate::allows('report_delete')) {
+        if (!Gate::allows('report_delete'))
+        {
             return abort(401);
         }
-        $report = Report::findOrFail($id);
-        $report->delete();
+
+        try
+        {
+             if($this->report->destroy($id))
+             {
+                 session()->flash('success', trans('admin.reports.deleted'));
+             }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('reports.index');
     }
@@ -144,16 +194,32 @@ class ReportsController extends Controller
      */
     public function massDestroy(Request $request)
     {
-        if (! Gate::allows('report_delete')) {
+        if(!Gate::allows('report_delete'))
+        {
             return abort(401);
         }
-        if ($request->input('ids')) {
-            $entries = Report::whereIn('id', $request->input('ids'))->get();
 
-            foreach ($entries as $entry) {
-                $entry->delete();
-            }
+        try
+        {
+             $this->report->destroyAll($request);
+             session()->flash('success', trans('admin.reports.deleted'));
         }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Get Users
+     *
+     * @return Array
+     */
+    protected function __getUserRelation()
+    {
+        return $relations = [
+            'users' => $this->user->getSelectedUsers(),
+        ];
     }
 
 }

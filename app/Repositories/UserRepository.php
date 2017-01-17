@@ -113,4 +113,14 @@ class UserRepository extends DbRepository
             return false;
         }
     }
+
+    /**
+     * Get User
+     *
+     * @return mix
+     */
+    public function getSelectedUsers()
+    {
+        return $this->model->get()->where('role_id',2)->pluck('name', 'id')->prepend('Please select', '');
+    }
 }

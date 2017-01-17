@@ -58,8 +58,4 @@ class RoleRepository extends DbRepository
     {
         return $this->model->get()->pluck('title', 'id')->prepend('Please select', '');
     }
-
-
-
-
 }
