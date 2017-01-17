@@ -2,14 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Test;
 use Illuminate\Http\Request;
+use App\Repositories\TestRepository;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreTestsRequest;
 use App\Http\Requests\UpdateTestsRequest;
 
 class TestsController extends Controller
 {
+
+    /**
+     * Construct
+     *
+     * @param TestRepository $test
+     */
+    public function __construct(TestRepository $test)
+    {
+        $this->test = $test;
+    }
+
     /**
      * Display a listing of Test.
      *
@@ -17,12 +28,14 @@ class TestsController extends Controller
      */
     public function index()
     {
-        if (! Gate::allows('test_access')) {
+        if(!Gate::allows('test_access'))
+        {
             return abort(401);
         }
-        $tests = Test::all();
 
-        return view('tests.index', compact('tests'));
+       $tests = $this->test->getAll();
+
+       return view('tests.index', compact('tests'));
     }
 
     /**
@@ -32,9 +45,11 @@ class TestsController extends Controller
      */
     public function create()
     {
-        if (! Gate::allows('test_create')) {
+        if(!Gate::allows('test_create'))
+        {
             return abort(401);
         }
+
         return view('tests.create');
     }
 
@@ -46,10 +61,24 @@ class TestsController extends Controller
      */
     public function store(StoreTestsRequest $request)
     {
-        if (! Gate::allows('test_create')) {
+        if(!Gate::allows('test_create'))
+        {
             return abort(401);
         }
-        $test = Test::create($request->all());
+
+        try
+        {
+            $test = $this->test->create($request);
+
+            if($test)
+            {
+                session()->flash('success', trans('admin.tests.created'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('tests.index');
     }
@@ -63,10 +92,12 @@ class TestsController extends Controller
      */
     public function edit($id)
     {
-        if (! Gate::allows('test_edit')) {
+        if(!Gate::allows('test_edit'))
+        {
             return abort(401);
         }
-        $test = Test::findOrFail($id);
+
+        $test = $this->test->findOrThrowException($id);
 
         return view('tests.edit', compact('test'));
     }
@@ -80,11 +111,24 @@ class TestsController extends Controller
      */
     public function update(UpdateTestsRequest $request, $id)
     {
-        if (! Gate::allows('test_edit')) {
+        if (!Gate::allows('test_edit'))
+        {
             return abort(401);
         }
-        $test = Test::findOrFail($id);
-        $test->update($request->all());
+
+        try
+        {
+            $test = $this->test->update($request, $id);
+
+            if($test)
+            {
+                session()->flash('success', trans('admin.tests.updated'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('tests.index');
     }
@@ -98,10 +142,12 @@ class TestsController extends Controller
      */
     public function show($id)
     {
-        if (! Gate::allows('test_view')) {
+        if (!Gate::allows('test_view'))
+        {
             return abort(401);
         }
-        $test = Test::findOrFail($id);
+
+        $test = $this->test->findOrThrowException($id);
 
         return view('tests.show', compact('test'));
     }
@@ -115,11 +161,22 @@ class TestsController extends Controller
      */
     public function destroy($id)
     {
-        if (! Gate::allows('test_delete')) {
+        if (!Gate::allows('test_delete'))
+        {
             return abort(401);
         }
-        $test = Test::findOrFail($id);
-        $test->delete();
+
+        try
+        {
+             if($this->test->destroy($id))
+             {
+                 session()->flash('success', trans('admin.tests.deleted'));
+             }
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
 
         return redirect()->route('tests.index');
     }
@@ -131,15 +188,19 @@ class TestsController extends Controller
      */
     public function massDestroy(Request $request)
     {
-        if (! Gate::allows('test_delete')) {
+        if (!Gate::allows('test_delete'))
+        {
             return abort(401);
         }
-        if ($request->input('ids')) {
-            $entries = Test::whereIn('id', $request->input('ids'))->get();
 
-            foreach ($entries as $entry) {
-                $entry->delete();
-            }
+        try
+        {
+             $this->test->destroyAll($request);
+             session()->flash('success', trans('admin.tests.deleted'));
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
         }
     }
 

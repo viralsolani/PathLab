@@ -80,17 +80,15 @@ Abstract class DbRepository
      */
     public function destroyAll($request)
     {
-        if ($request->input('ids'))
+        if($request->input('ids'))
         {
             $entries = $this->model->whereIn('id', $request->input('ids'))->get();
 
-            foreach ($entries as $entry)
+            foreach($entries as $entry)
             {
                 $entry->delete();
             }
         }
-
-        throw new GeneralException('There was a problem deleting this records. Please try again.');
     }
 
     /**

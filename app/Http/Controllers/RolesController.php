@@ -13,7 +13,7 @@ class RolesController extends Controller
     /**
      * Construct
      *
-     * @param User $model
+     * @param RoleRepository $role
      */
     public function __construct(RoleRepository $role)
     {
@@ -165,11 +165,19 @@ class RolesController extends Controller
             return abort(401);
         }
 
-        if($this->role->destroy($id))
+        try
         {
-            session()->flash('success', trans('admin.roles.deleted'));
-            return redirect()->route('roles.index');
+             if($this->role->destroy($id))
+             {
+                 session()->flash('success', trans('admin.roles.deleted'));
+             }
         }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
+
+        return redirect()->route('roles.index');
     }
 
     /**
@@ -184,7 +192,15 @@ class RolesController extends Controller
             return abort(401);
         }
 
-        $this->role->destroyAll($request);
+        try
+        {
+             $this->role->destroyAll($request);
+             session()->flash('success', trans('admin.tests.deleted'));
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
     }
 
 }

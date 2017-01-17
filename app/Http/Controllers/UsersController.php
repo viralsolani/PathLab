@@ -15,7 +15,8 @@ class UsersController extends Controller
     /**
      * Construct
      *
-     * @param User $model
+     * @param UserRepository $user
+     * @param RoleRepository $role
      */
     public function __construct(UserRepository $user, RoleRepository $role)
     {
@@ -201,7 +202,16 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $this->user->destroyAll($request);
+        try
+        {
+             $this->user->destroyAll($request);
+             session()->flash('success', trans('admin.tests.deleted'));
+        }
+        catch(\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
+
     }
 
     /**
