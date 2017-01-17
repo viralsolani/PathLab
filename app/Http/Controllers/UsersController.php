@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Gate;
 class UsersController extends Controller
 {
     /**
+     * Construct
      *
      * @param User $model
      */
@@ -28,7 +29,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        if (! Gate::allows('user_access'))
+        if (!Gate::allows('user_access'))
         {
             return abort(401);
         }
@@ -45,7 +46,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        if(! Gate::allows('user_create'))
+        if(!Gate::allows('user_create'))
         {
             return abort(401);
         }
@@ -63,7 +64,7 @@ class UsersController extends Controller
      */
     public function store(StoreUsersRequest $request)
     {
-        if(! Gate::allows('user_create'))
+        if(!Gate::allows('user_create'))
         {
             return abort(401);
         }
@@ -108,7 +109,7 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $this->user->update($request, $id);
+        $user = $this->user->update($request, $id);
 
         return redirect()->route('users.index');
     }
@@ -160,7 +161,7 @@ class UsersController extends Controller
      */
     public function massDestroy(Request $request)
     {
-        if (!Gate::allows('user_delete'))
+        if(!Gate::allows('user_delete'))
         {
             return abort(401);
         }

@@ -59,7 +59,7 @@ class UserRepository extends DbRepository
 
         $user = $this->findOrThrowException($id);
 
-        $user->update($request->all());
+        return $user->update($request->all());
     }
 
     /**

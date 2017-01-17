@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use Illuminate\Http\Request;
+use App\Repositories\RoleRepository;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreRolesRequest;
 use App\Http\Requests\UpdateRolesRequest;
@@ -11,16 +11,28 @@ use App\Http\Requests\UpdateRolesRequest;
 class RolesController extends Controller
 {
     /**
+     * Construct
+     *
+     * @param User $model
+     */
+    public function __construct(RoleRepository $role)
+    {
+        $this->role = $role;
+    }
+
+    /**
      * Display a listing of Role.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        if (! Gate::allows('role_access')) {
+        if(!Gate::allows('role_access'))
+        {
             return abort(401);
         }
-        $roles = Role::all();
+
+        $roles = $this->role->getAll();
 
         return view('roles.index', compact('roles'));
     }
@@ -32,9 +44,11 @@ class RolesController extends Controller
      */
     public function create()
     {
-        if (! Gate::allows('role_create')) {
+        if(!Gate::allows('role_create'))
+        {
             return abort(401);
         }
+
         return view('roles.create');
     }
 
@@ -46,10 +60,12 @@ class RolesController extends Controller
      */
     public function store(StoreRolesRequest $request)
     {
-        if (! Gate::allows('role_create')) {
+        if(!Gate::allows('role_create'))
+        {
             return abort(401);
         }
-        $role = Role::create($request->all());
+
+        $this->role->create($request);
 
         return redirect()->route('roles.index');
     }
@@ -63,10 +79,12 @@ class RolesController extends Controller
      */
     public function edit($id)
     {
-        if (! Gate::allows('role_edit')) {
+        if(!Gate::allows('role_edit'))
+        {
             return abort(401);
         }
-        $role = Role::findOrFail($id);
+
+        $role = $this->role->findOrThrowException($id);
 
         return view('roles.edit', compact('role'));
     }
@@ -80,11 +98,12 @@ class RolesController extends Controller
      */
     public function update(UpdateRolesRequest $request, $id)
     {
-        if (! Gate::allows('role_edit')) {
+        if(!Gate::allows('role_edit'))
+        {
             return abort(401);
         }
-        $role = Role::findOrFail($id);
-        $role->update($request->all());
+
+        $role = $this->role->update($request, $id);
 
         return redirect()->route('roles.index');
     }
@@ -98,10 +117,12 @@ class RolesController extends Controller
      */
     public function show($id)
     {
-        if (! Gate::allows('role_view')) {
+        if(!Gate::allows('role_view'))
+        {
             return abort(401);
         }
-        $role = Role::findOrFail($id);
+
+        $role = $this->role->findOrThrowException($id);
 
         return view('roles.show', compact('role'));
     }
@@ -115,11 +136,12 @@ class RolesController extends Controller
      */
     public function destroy($id)
     {
-        if (! Gate::allows('role_delete')) {
+        if(!Gate::allows('role_delete'))
+        {
             return abort(401);
         }
-        $role = Role::findOrFail($id);
-        $role->delete();
+
+        $this->role->destroy($id);
 
         return redirect()->route('roles.index');
     }
@@ -131,16 +153,12 @@ class RolesController extends Controller
      */
     public function massDestroy(Request $request)
     {
-        if (! Gate::allows('role_delete')) {
+        if (!Gate::allows('role_delete'))
+        {
             return abort(401);
         }
-        if ($request->input('ids')) {
-            $entries = Role::whereIn('id', $request->input('ids'))->get();
 
-            foreach ($entries as $entry) {
-                $entry->delete();
-            }
-        }
+        $this->role->destroyAll($request);
     }
 
 }

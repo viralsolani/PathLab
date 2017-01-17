@@ -15,11 +15,38 @@ class RoleRepository extends DbRepository
 
     /**
      *
-     * @param User $model
+     * @param Role $model
      */
     public function __construct(Role $model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * Create Role
+     *
+     * @param $request
+     * @return mixed
+     */
+    public function create($request)
+    {
+        $role =  $this->model->create($request->all());
+
+        return $role;
+    }
+
+    /**
+     * Update Role
+     *
+     * @param $request
+     * @param $id
+     * @return mixed
+     */
+    public function update($request, $id)
+    {
+        $role = $this->findOrThrowException($id);
+
+        return $role->update($request->all());
     }
 
     /**
