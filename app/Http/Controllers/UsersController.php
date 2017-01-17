@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use App\Exceptions\GeneralException;
 use App\Http\Requests\StoreUsersRequest;
 use App\Http\Requests\UpdateUsersRequest;
-use App\Http\Controllers\Traits\FileUploadTrait;
+use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UsersController extends Controller
 {
-    use FileUploadTrait;
-
+    /**
+     *
+     * @param User $model
+     */
+    public function __construct(UserRepository $user, RoleRepository $role)
+    {
+        $this->user = $user;
+        $this->role = $role;
+    }
     /**
      * Display a listing of User.
      *
@@ -20,10 +28,12 @@ class UsersController extends Controller
      */
     public function index()
     {
-        if (! Gate::allows('user_access')) {
+        if (! Gate::allows('user_access'))
+        {
             return abort(401);
         }
-        $users = User::all();
+
+        $users = $this->user->getAll();
 
         return view('users.index', compact('users'));
     }
@@ -35,12 +45,12 @@ class UsersController extends Controller
      */
     public function create()
     {
-        if (! Gate::allows('user_create')) {
+        if(! Gate::allows('user_create'))
+        {
             return abort(401);
         }
-        $relations = [
-            'roles' => \App\Role::get()->pluck('title', 'id')->prepend('Please select', ''),
-        ];
+
+        $relations = $this->__getRoleRelation();
 
         return view('users.create', $relations);
     }
@@ -53,17 +63,12 @@ class UsersController extends Controller
      */
     public function store(StoreUsersRequest $request)
     {
-        if (! Gate::allows('user_create')) {
+        if(! Gate::allows('user_create'))
+        {
             return abort(401);
         }
 
-        $request = $this->saveFiles($request);
-        $user = User::create($request->all());
-
-       if($user)
-       {
-            $this->sendConfirmationEmail($request);
-       }
+        $this->user->create($request);
 
         return redirect()->route('users.index');
     }
@@ -77,14 +82,14 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        if (! Gate::allows('user_edit')) {
+        if(!Gate::allows('user_edit'))
+        {
             return abort(401);
         }
-        $relations = [
-            'roles' => \App\Role::get()->pluck('title', 'id')->prepend('Please select', ''),
-        ];
 
-        $user = User::findOrFail($id);
+        $relations = $this->__getRoleRelation();
+
+        $user = $this->user->findOrThrowException($id);
 
         return view('users.edit', compact('user') + $relations);
     }
@@ -98,12 +103,12 @@ class UsersController extends Controller
      */
     public function update(UpdateUsersRequest $request, $id)
     {
-        if (! Gate::allows('user_edit')) {
+        if(!Gate::allows('user_edit'))
+        {
             return abort(401);
         }
-        $request = $this->saveFiles($request);
-        $user = User::findOrFail($id);
-        $user->update($request->all());
+
+        $this->user->update($request, $id);
 
         return redirect()->route('users.index');
     }
@@ -117,14 +122,14 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        if (! Gate::allows('user_view')) {
+        if(!Gate::allows('user_view'))
+        {
             return abort(401);
         }
-        $relations = [
-            'roles' => \App\Role::get()->pluck('title', 'id')->prepend('Please select', ''),
-        ];
 
-        $user = User::findOrFail($id);
+        $relations = $this->__getRoleRelation();
+
+        $user = $this->user->findOrThrowException($id);
 
         return view('users.show', compact('user') + $relations);
     }
@@ -138,11 +143,12 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        if (! Gate::allows('user_delete')) {
+        if(!Gate::allows('user_delete'))
+        {
             return abort(401);
         }
-        $user = User::findOrFail($id);
-        $user->delete();
+
+        $this->user->destroy($id);
 
         return redirect()->route('users.index');
     }
@@ -154,69 +160,23 @@ class UsersController extends Controller
      */
     public function massDestroy(Request $request)
     {
-        if (! Gate::allows('user_delete')) {
+        if (!Gate::allows('user_delete'))
+        {
             return abort(401);
         }
-        if ($request->input('ids')) {
-            $entries = User::whereIn('id', $request->input('ids'))->get();
 
-            foreach ($entries as $entry) {
-                $entry->delete();
-            }
-        }
+        $this->user->destroyAll($request);
     }
 
     /**
-     * Send Passcode To User whose role is patient
+     * Get Roles
      *
-     * @param  object $user
-     * @return bool
+     * @return Array
      */
-    public function sendConfirmationEmail($input)
+    protected function __getRoleRelation()
     {
-        try
-        {
-            # set up PHPMailer Library
-            $mail = new \PHPMailer(true);
-
-            # variables
-            $title    = "Your Passcode for login";
-
-
-            # set the PHPMailer properties
-            $mail->isSMTP();
-            $mail->CharSet    = "utf-8";
-            $mail->SMTPAuth   = true;
-            $mail->SMTPSecure = env('MAIL_ENCRYPTION','tls');
-            $mail->Host       = env('MAIL_HOST','smtp.gmail.com');
-            $mail->Port       = env('MAIL_PORT','587');
-            $mail->Username   = env('MAIL_USERNAME','p.vansia@gmail.com');
-            $mail->Password   = env('MAIL_PASSWORD','Aanya!l00k');
-            $mail->Subject    = "Pathology Lab Report : PASSCODE ";
-            $mail->From       = "myemail@gmail.com";
-            $mail->FromName   = "Web Site";
-
-
-            $mail->MsgHTML(
-                'PASSCODE : '.$input->password
-            );
-
-            $mail->addAddress(
-                $input->email, 'test'
-            );
-
-            # send email
-            return $mail->send();
-        }
-        catch (phpmailerException $e)
-        {
-            return false;
-        }
-        catch (Exception $e)
-        {
-            return false;
-        }
-
+        return $relations = [
+            'roles' => $this->role->getSelectedRoles(),
+        ];
     }
-
 }

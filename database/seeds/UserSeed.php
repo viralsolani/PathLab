@@ -22,8 +22,8 @@ class UserSeed extends Seeder
         $users = [
             [
                 'name'              => 'Operator',
-                'email'             => 'operator@crossover.com',
-                'password'          => bcrypt('pasword'),
+                'email'             => 'operator@operator.com',
+                'password'          => bcrypt('password'),
                 'role_id'           => 1,
                 'remember_token'    => '',
                 'phone'             => 9428315132,
@@ -35,7 +35,7 @@ class UserSeed extends Seeder
             [
                 'name'              => 'Patient1',
                 'email'             => 'patient@gmail.com',
-                'password'          => bcrypt('pasword'),
+                'password'          => bcrypt('password'),
                 'role_id'           => 2,
                 'remember_token'    => '',
                 'phone'             => 9016608346,

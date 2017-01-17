@@ -28,7 +28,7 @@
 
                 <div class="row">
                     <div class="col-md-12">
-
+                    {{-- @include('partials.messages') --}}
                         @if (Session::has('message'))
                             <div class="note note-info">
                                 <p>{{ Session::get('message') }}</p>
