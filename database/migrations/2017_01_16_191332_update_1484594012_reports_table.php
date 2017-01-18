@@ -26,9 +26,10 @@ class Update1484594012ReportsTable extends Migration
      */
     public function down()
     {
-        Schema::table('reports', function (Blueprint $table) {
-            $table->dropForeign('fk_8180_user_user_id_report');
-            $table->dropIndex('fk_8180_user_user_id_report');
+        Schema::table('reports', function (Blueprint $table)
+        {
+            $table->dropForeign('fk_useruser_report');
+            $table->dropIndex('fk_useruser_report');
             $table->dropColumn('user_id');
 
         });
