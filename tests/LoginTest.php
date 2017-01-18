@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -97,6 +98,64 @@ class ExampleTest extends TestCase
             ->seePageIs('/home')
             ->see('You are logged in!')
             ->dontSee('User Management');
+    }
+
+    public function test_access_operator()
+    {
+        $this->actingAs($this->operator);
+        $this->assertEquals(auth()->user()->id, 1);
+        $this->assertEquals(auth()->user()->role->id, 1);
+    }
+
+    public function test_access_patient()
+    {
+        $this->actingAs($this->patient);
+        $this->assertEquals(auth()->user()->id, 2);
+        $this->assertEquals(auth()->user()->role->id, 2);
+    }
+
+
+    /**
+     * Create Operator
+     * @return App\User
+     */
+    private function __createOperator()
+    {
+        return $operator = factory(User::class)->create(
+            [
+                "role_id"     => 1,
+                "name"        => "test Operator",
+                "email"       => "test@test.com",
+                "password"    => "12345",
+            ]
+        );
+    }
+
+    /**
+     * Create Patient
+     * @return App\User
+     */
+    private function __createPatient()
+    {
+        $patient = factory(User::class)->create(
+            [
+            "name"        => "patientTest",
+            "email"       => "patient@test.com",
+            "password"    => "123456",
+            "role_id"     => 2
+            ]
+        );
+        return $patient;
+    }
+    /**
+     * delete User
+     *
+     * @param  $user
+     * @return bool
+     */
+    private function __deleteUser($user)
+    {
+        $user->delete();
     }
 
 }

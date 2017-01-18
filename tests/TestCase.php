@@ -62,9 +62,9 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
          * Create class properties to be used in tests
          */
 
-        /*$this->operator = User::find(1);
+        $this->operator = User::find(1);
         $this->patient = User::find(2);
         $this->operatorRole = Role::find(1);
-        $this->patientRole = Role::find(3);*/
+        $this->patientRole = Role::find(3);
     }
 }
