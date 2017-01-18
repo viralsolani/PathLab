@@ -66,7 +66,7 @@ class OperatorActivitiesTest extends TestCase
             ->click('Users')->seePageIs('/users')
             ->click('Add new')->seePageIs('users/create')
             ->type("Test Patient", "name")
-            ->type("test@test.com", "email")
+            ->type("solani.viral@gmail.com", "email")
             ->type("123456", "password")
             ->select("2", "role_id")
             ->type("05-07-1986", "dob")
@@ -81,13 +81,13 @@ class OperatorActivitiesTest extends TestCase
     public function test_edit_patient()
     {
         // delete this user
-        $patient = User::where('email', '=', 'test@test.com')->first();
+        $patient = User::where('email', '=', 'solani.viral@gmail.com')->first();
 
         $this->actingAs($this->operator)
             ->visit("/users/$patient->id/edit")
             ->see("Edit")->see($patient->name)->see($patient->email)
             ->type("Test Patient Updated", "name")
-            ->type("test@test.com", "email")
+            ->type("solani.viral@gmail.com", "email")
             ->type("123456", "password")
             ->select("2", "role_id")
             ->type("05-07-1984", "dob")
@@ -95,7 +95,7 @@ class OperatorActivitiesTest extends TestCase
             ->press('Update')->seePageIs("/users")->see("Test Patient Updated");
 
             // delete this user
-            User::where('email', '=', 'test@test.com')->forceDelete();
+            User::where('email', '=', 'solani.viral@gmail.com')->forceDelete();
     }
 
     /**
@@ -222,5 +222,54 @@ class OperatorActivitiesTest extends TestCase
             ->type("15", "result")
             ->press('Save')->see("The test has been successfully added to report.");
     }
+
+    /**
+     * Test Report with test view
+     */
+    public function test_report_with_tests_view()
+    {
+        $item = Report::where('name', '=', 'Report2')->first();
+
+        $this->actingAs($this->operator)
+            ->visit("/reports/$item->id")
+            ->see("Reports")
+            ->see($item->name)
+            ->see('Patient Name');
+    }
+
+    /**
+     * Test download pdf report
+     */
+    public function test_download_reports_in_pdf_format()
+    {
+        $item = Report::where('name', '=', 'Report2')->first();
+
+        $this->actingAs($this->operator)
+            ->visit("/reports/$item->id")
+            ->see("Reports")
+            ->see($item->name)
+            ->see('Patient Name')
+            ->click('Download');
+    }
+
+    /**
+     * Test email reports
+     */
+    public function test_send_email_of_reports_in_pdf_format()
+    {
+        $item = Report::where('name', '=', 'Report2')->first();
+
+        $this->actingAs($this->operator)
+            ->visit("/reports/$item->id")
+            ->see("Reports")
+            ->see($item->name)
+            ->see('Patient Name')
+            ->type('solani.viral@gmail.com','email')
+            ->type('TDD','message')
+            ->press('Save')
+            ->see('The report has been successfully send.');
+    }
+
+
 
 }

@@ -248,6 +248,9 @@ class ReportsController extends Controller
             $report     = $this->report->findOrThrowException($id);
 
             $pdf = \PDF::loadView('reports.pdf', compact('report') + $relations);
+
+            session()->flash('success', trans('admin.reports.downloaded'));
+
             return $pdf->download('report.pdf');
         }
         catch (\Exception $e)
@@ -289,7 +292,7 @@ class ReportsController extends Controller
                 $message->attachData($pdf->output(), "report.pdf");
             });
 
-            session()->flash('success', 'Report has been emailed  successfully.');
+            session()->flash('success', trans('admin.reports.emailed'));
 
         } catch (\Exception $e)
         {
