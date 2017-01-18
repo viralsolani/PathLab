@@ -270,6 +270,4 @@ class OperatorActivitiesTest extends TestCase
             ->see('The report has been successfully send.');
     }
 
-
-
 }
