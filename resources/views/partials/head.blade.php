@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <title>
-    ABC Pathology Lab
+    @lang('admin.site-title')
 </title>
 
 <meta http-equiv="X-UA-Compatible"

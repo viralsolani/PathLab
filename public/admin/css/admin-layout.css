@@ -564,7 +564,7 @@ Page Header
 }
 
 /***
-Horizontal Menu 
+Horizontal Menu
 ***/
 .page-header.navbar {
     /* Header container */
@@ -2001,8 +2001,8 @@ Quick Sidebar Layout
     right: 0;
 }
 
-/*** 
-Quick Sidebar Toggler 
+/***
+Quick Sidebar Toggler
 ***/
 .page-quick-sidebar-toggler {
     overflow: hidden;
@@ -3051,8 +3051,8 @@ Theme Panel
     margin-right: 255px;
 }
 
-/***  
-Page Loading       
+/***
+Page Loading
 ***/
 .page-on-load {
     background: #fefefe;
@@ -3067,6 +3067,10 @@ Page Loading
 }
 
 .navbar-brand {
+    color: #C5C5C5;
+}
+
+.navbar-text {
     color: #C5C5C5;
 }
 

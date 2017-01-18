@@ -10,15 +10,6 @@ use Hash;
 /**
  * Class User
  *
- * @package App
- * @property string $name
- * @property string $email
- * @property string $password
- * @property string $role
- * @property string $remember_token
- * @property string $phone
- * @property string $dob
- * @property string $photo
 */
 class User extends Authenticatable
 {
@@ -77,6 +68,11 @@ class User extends Authenticatable
         }
     }
 
+    /**
+     * Relationship Mapping for User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id')->withTrashed();

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Mail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Gate;
 use App\Repositories\ReportRepository;
+use App\Http\Requests\EmailReportRequest;
 use App\Http\Requests\StoreReportsRequest;
 use App\Http\Requests\UpdateReportsRequest;
 
@@ -28,16 +30,35 @@ class ReportsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!Gate::allows('report_access'))
         {
             return abort(401);
         }
 
-        $reports = $this->report->getAll();
+        $reports = $this->getReports($request);
 
         return view('reports.index', compact('reports'));
+    }
+
+    /**
+     * Get Reports
+     *
+     * @return Report collection
+     */
+    public function getReports($request)
+    {
+        if($this->loggedInUser()->role->id == 1)
+        {
+            $reports = $this->report->getAll();
+        }
+        else
+        {
+            $reports = $this->report->forUser($request->user());
+        }
+
+        return $reports;
     }
 
     /**
@@ -211,6 +232,74 @@ class ReportsController extends Controller
     }
 
     /**
+     * @param null $id
+     * @return mixed
+     */
+    public function download($id = null)
+    {
+        if (!Gate::allows('report_access'))
+        {
+            return abort(401);
+        }
+
+        try
+        {
+            $relations  = $this->__getUSerRelation();
+            $report     = $this->report->findOrThrowException($id);
+
+            $pdf = \PDF::loadView('reports.pdf', compact('report') + $relations);
+            return $pdf->download('report.pdf');
+        }
+        catch (\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+            return redirect()->route('reports.show', $id);
+        }
+    }
+
+    /**
+     * @param EmailReportRequest $request
+     * @param $id
+     * @return mixed
+     */
+    public function send(EmailReportRequest $request, $id)
+    {
+        if(!Gate::allows('report_access'))
+        {
+            return abort(401);
+        }
+
+        try
+        {
+            $to = $request->get('email');
+            $text = $request->get('message');
+
+            $relations  = $this->__getUSerRelation();
+            $report     = $this->report->findOrThrowException($id);
+
+            $pdf = \PDF::loadView('reports.pdf', compact('report') + $relations);
+
+
+            Mail::send('emails.report', ['text' => $text], function($message) use($pdf,$to, $request )
+            {
+                $message->from('info@abcpathology.com', $request->user()->name);
+
+                $message->to($to)->subject('Pathology Test Report');
+
+                $message->attachData($pdf->output(), "report.pdf");
+            });
+
+            session()->flash('success', 'Report has been emailed  successfully.');
+
+        } catch (\Exception $e)
+        {
+            session()->flash('error', $e->getMessage());
+        }
+
+        return redirect()->route('reports.show', $id);
+    }
+
+    /**
      * Get Users
      *
      * @return Array
@@ -221,5 +310,6 @@ class ReportsController extends Controller
             'users' => $this->user->getSelectedUsers(),
         ];
     }
+
 
 }

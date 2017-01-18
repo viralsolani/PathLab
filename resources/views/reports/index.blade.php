@@ -20,8 +20,9 @@
                         @can('report_delete')
                             <th style="text-align:center;"><input type="checkbox" id="select-all" /></th>
                         @endcan
-
-                        <th>@lang('admin.reports.fields.user')</th>
+                        @can('report_patient_name_access')
+                            <th>@lang('admin.reports.fields.user')</th>
+                        @endcan
                         <th>@lang('admin.reports.fields.name')</th>
                         <th>@lang('admin.reports.fields.date')</th>
                         <th>&nbsp;</th>
@@ -35,12 +36,13 @@
                                 @can('report_delete')
                                     <td></td>
                                 @endcan
-
-                                <td>{{ $report->user->name or '' }}</td>
+                                @can('report_patient_name_access')
+                                    <td>{{ $report->user->name or '' }}</td>
+                                @endcan
                                 <td>{{ $report->name }}</td>
                                 <td>{{ $report->date }}</td>
                                 <td>
-                                    @can('report_view')
+                                    @can('report_create')
                                     <a href="{{route('reports.tests.index', $report->id)}}" class="btn btn-xs btn-primary">@lang('admin.add_test')</a>
                                     @endcan
                                     @can('report_view')

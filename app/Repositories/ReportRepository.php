@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Test;
+use App\Models\User;
 use App\Models\Report;
 use App\Repositories\DbRepository;
 use App\Exceptions\GeneralException;
@@ -21,6 +22,19 @@ class ReportRepository extends DbRepository
     public function __construct(Report $model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * Get all of the reports for a given user.
+     *
+     * @param  User $user
+     * @return Collection
+     */
+    public function forUser(User $user)
+    {
+        return Report::where('user_id', $user->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
     /**

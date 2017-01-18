@@ -10,11 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class Report
  *
- * @package App
- * @property string $user
- * @property string $name
- * @property text $details
- * @property string $date
 */
 class Report extends Model
 {

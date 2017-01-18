@@ -99,7 +99,6 @@ Abstract class DbRepository
     */
     public function selectAll($columns='*', $order_by = 'id', $sort = 'asc')
     {
-        //return $this->model->select($columns)->orderBy($order_by, $sort)->skip(0)->take(5)->get();
         return $this->model->select($columns)->orderBy($order_by, $sort)->get();
     }
 

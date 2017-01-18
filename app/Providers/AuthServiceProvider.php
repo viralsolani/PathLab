@@ -70,11 +70,14 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Reports management
         Gate::define('reports_management_access', function ($user) {
-            return in_array($user->role_id, [1]);
+            return in_array($user->role_id, [1,2]);
         });
 
         // Auth gates for: Reports
         Gate::define('report_access', function ($user) {
+            return in_array($user->role_id, [1,2]);
+        });
+        Gate::define('report_patient_name_access', function ($user) {
             return in_array($user->role_id, [1]);
         });
         Gate::define('report_create', function ($user) {
@@ -84,7 +87,7 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1]);
         });
         Gate::define('report_view', function ($user) {
-            return in_array($user->role_id, [1]);
+            return in_array($user->role_id, [1,2]);
         });
         Gate::define('report_delete', function ($user) {
             return in_array($user->role_id, [1]);

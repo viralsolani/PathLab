@@ -31,6 +31,12 @@ Route::group(['middleware' => 'auth'], function ()
 
     Route::resource('reports', 'ReportsController');
     Route::post('reports_mass_destroy', ['uses' => 'ReportsController@massDestroy', 'as' => 'reports.mass_destroy']);
+    Route::get('reports/{report}/download', [
+        'as' => 'reports.download', 'uses' => 'ReportsController@download'
+    ]);
+    Route::post('reports/{report}/send', [
+        'as' => 'reports.send', 'uses' => 'ReportsController@send'
+    ]);
 
     Route::resource('tests', 'TestsController');
     Route::post('tests_mass_destroy', ['uses' => 'TestsController@massDestroy', 'as' => 'tests.mass_destroy']);
