@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(RoleSeed::class);
         $this->call(UserSeed::class);
+        $this->call(TestSeed::class);
+        $this->call(ReportsSeed::class);
 
         if (DB::connection()->getDriverName() == 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');

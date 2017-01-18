@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Test;
 use App\Models\User;
+use App\Models\Report;
+use Carbon\Carbon as Carbon;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -112,13 +115,12 @@ class OperatorActivitiesTest extends TestCase
     }*/
 
     /**
-     * Test Validation - Create User
+     * Test Validation - Create test
      */
     public function test_validation_of_create_test()
     {
         $this->actingAs($this->operator)
             ->visit('/home')->seePageIs('/home')
-            ->click('Reports Management')
             ->click('Tests')->seePageIs('/tests')
             ->click('Add new')->seePageIs('tests/create')
             ->type("", "name")
@@ -134,12 +136,91 @@ class OperatorActivitiesTest extends TestCase
     {
         $this->actingAs($this->operator)
             ->visit('/home')->seePageIs('/home')
-            ->click('User Management')
             ->click('Tests')->seePageIs('/tests')
             ->click('Add new')->seePageIs('tests/create')
             ->type("Medical Test", "name")
             ->type("Medical Test", "description")
             ->press('Save')->seePageIs("/tests")->see("Medical Test");
+    }
+
+    /**
+     * Test Edit test
+     *
+     */
+    public function test_edit_test()
+    {
+
+        $item = Test::where('name', '=', 'Medical Test')->first();
+
+        $this->actingAs($this->operator)
+            ->visit("/tests/$item->id/edit")
+            ->see("Edit")->see($item->name)
+            ->type("Medical Test Updated", "name")
+            ->type("Medical Test Updated", "description")
+            ->press('Update')->seePageIs("/tests")->see("Medical Test Updated");
+
+            // delete this test
+            Test::where('name', '=', 'Medical Test Updated')->forceDelete();
+    }
+
+    /**
+     * Test Validation - Create report
+     */
+    public function test_validation_of_create_report()
+    {
+        $this->actingAs($this->operator)
+            ->visit('/home')->seePageIs('/home')
+            ->click('Reports')->seePageIs('/reports')
+            ->click('Add new')->seePageIs('reports/create')
+            ->type("", "name")
+            ->press('Save')->seePageIs("/reports/create")
+                ->see("The name field is required.")
+                ->see("The user id field is required.");
+    }
+
+    /**
+     * Test Create report
+     */
+    public function test_create_report()
+    {
+        $this->actingAs($this->operator)
+            ->visit('/home')->seePageIs('/home')
+            ->click('Reports')->seePageIs('/reports')
+            ->click('Add new')->seePageIs('reports/create')
+            ->type("Report1", "name")
+            ->select("2", "user_id")
+            ->type("Report1 Details", "details")
+            ->press('Save')->seePageIs("/reports")->see("Report1");
+    }
+
+    /**
+     * Test edit report
+     */
+    public function test_edit_report()
+    {
+        $item = Report::where('name', '=', 'Report1')->first();
+
+        $this->actingAs($this->operator)
+            ->visit("/reports/$item->id/edit")
+            ->see("Edit")->see($item->name)
+            ->type("Report2", "name")
+            ->type("Report2", "details")
+            ->press('Update')->seePageIs("/reports")->see("Report2");
+    }
+
+    /**
+     * Test Report's Add test feature
+     */
+    public function test_report_add_test_feature()
+    {
+        $item = Report::where('name', '=', 'Report2')->first();
+
+        $this->actingAs($this->operator)
+            ->visit("/reports/$item->id/tests")
+            ->see("Add Test Result")->see($item->name)
+            ->select('1','test')
+            ->type("15", "result")
+            ->press('Save')->see("The test has been successfully added to report.");
     }
 
 }

@@ -23,9 +23,7 @@ class UpdateTestsRequest extends FormRequest
     public function rules()
     {
         return [
-            
-            
-            
+            'name' => 'required',
         ];
     }
 }

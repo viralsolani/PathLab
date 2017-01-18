@@ -46,26 +46,19 @@
                 </ul>
             </li>
             @endcan
-            @can('reports_management_access')
-            <li>
-                <a href="#">
-                    <i class="fa fa-line-chart"></i>
-                    <span class="title">@lang('admin.reports-management.title')</span>
-                    <span class="fa arrow"></span>
-                </a>
-                <ul class="sub-menu">
 
-                @can('report_access')
-                <li class="{{ $request->segment(1) == 'reports' ? 'active active-sub' : '' }}">
-                        <a href="{{ route('reports.index') }}">
-                            <i class="fa fa-list-alt"></i>
-                            <span class="title">
-                                @lang('admin.reports.title')
-                            </span>
-                        </a>
-                    </li>
-                @endcan
-                @can('test_access')
+            @can('report_access')
+            <li class="{{ $request->segment(1) == 'reports' ? 'active active-sub' : '' }}">
+                    <a href="{{ route('reports.index') }}">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">
+                            @lang('admin.reports.title')
+                        </span>
+                    </a>
+                </li>
+            @endcan
+
+            @can('test_access')
                 <li class="{{ $request->segment(1) == 'tests' ? 'active active-sub' : '' }}">
                         <a href="{{ route('tests.index') }}">
                             <i class="fa fa-heartbeat"></i>
@@ -74,9 +67,6 @@
                             </span>
                         </a>
                     </li>
-                @endcan
-                </ul>
-            </li>
             @endcan
 
             <li>
