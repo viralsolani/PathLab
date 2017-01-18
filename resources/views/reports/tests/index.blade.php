@@ -88,7 +88,7 @@
                                 {{ method_field('DELETE') }}
 
                                 <button type="submit" id="delete-test-{{ $test->id }}" class="btn btn-sm btn-danger">
-                                    <i class="fa fa-btn fa-trash"></i>Delete
+                                    Delete
                                 </button>
                             </form>
                         </td>
